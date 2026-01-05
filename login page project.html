@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aesthetic Red Holographic Auth</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --primary: #00f2ea;
+        --secondary: #ff0050;
+        --red-gradient-start: #ff416c;
+        --red-gradient-end: #ff4b2b;
+        --bg-deep: #050510;
+        --glass-surface: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --text-main: #ffffff;
+        --text-muted: #8b9bb4;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--bg-deep);
+        background-image: 
+            radial-gradient(circle at 15% 50%, rgba(118, 75, 162, 0.15) 0%, transparent 25%), 
+            radial-gradient(circle at 85% 30%, rgba(102, 126, 234, 0.15) 0%, transparent 25%);
+        font-family: 'Space Grotesk', sans-serif;
+        overflow: hidden;
+        perspective: 1200px;
+    }
+
+    /* --- BACKGROUND OBJECTS --- */
+    .shape {
+        position: absolute;
+        filter: drop-shadow(0 0 15px rgba(0, 242, 234, 0.3));
+        z-index: -1;
+        opacity: 0.6;
+        animation: floatShape 8s ease-in-out infinite;
+    }
+    .cube {
+        width: 80px; height: 80px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+        border: 1px solid rgba(255,255,255,0.2);
+        backdrop-filter: blur(5px);
+        transform: rotate(45deg);
+        top: 20%; left: 15%;
+    }
+    .pyramid {
+        width: 0; height: 0;
+        border-left: 50px solid transparent;
+        border-right: 50px solid transparent;
+        border-bottom: 90px solid rgba(255, 0, 80, 0.15);
+        top: 70%; right: 15%;
+        animation-delay: -2s;
+        filter: drop-shadow(0 0 20px rgba(255, 0, 80, 0.4));
+    }
+    @keyframes floatShape {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-30px) rotate(10deg); }
+    }
+
+    /* --- MAIN CARD --- */
+    .container {
+        position: relative;
+        background: var(--glass-surface);
+        border-radius: 30px;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.6), 
+                    inset 0 0 0 1px var(--glass-border);
+        overflow: hidden;
+        width: 900px;
+        max-width: 95%;
+        min-height: 600px;
+        backdrop-filter: blur(40px) saturate(150%);
+        -webkit-backdrop-filter: blur(40px) saturate(150%);
+        transition: transform 0.1s ease-out;
+    }
+
+    /* --- THE SPOTLIGHT EFFECT --- */
+    .container::before {
+        content: '';
+        position: absolute;
+        top: var(--y, 50%);
+        left: var(--x, 50%);
+        transform: translate(-50%, -50%);
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.5s;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .container:hover::before { opacity: 1; }
+
+    /* --- FORMS --- */
+    .form-container {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 0 50px;
+        width: 50%; 
+        z-index: 1;
+    }
+
+    .sign-in-container { left: 0; z-index: 2; }
+    .sign-up-container { left: 0; opacity: 0; z-index: 1; }
+
+    /* Desktop Sliding Logic */
+    .container.right-panel-active .sign-in-container {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    .container.right-panel-active .sign-up-container {
+        transform: translateX(100%);
+        opacity: 1;
+        z-index: 5;
+    }
+
+    /* --- UI ELEMENTS (UPDATED) --- */
+    h1 {
+        font-weight: 800; /* Extra Bold as requested */
+        color: var(--text-main);
+        font-size: 40px; /* Bigger Aesthetic Size */
+        margin-bottom: 10px;
+        letter-spacing: -1px;
+        text-shadow: 0 0 15px rgba(255,255,255,0.2);
+    }
+    span { font-size: 14px; color: var(--text-muted); margin-bottom: 25px; letter-spacing: 0.5px; }
+
+    .social-container { margin: 15px 0; }
+    .social-container a {
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 6px;
+        height: 44px;
+        width: 44px;
+        color: var(--text-main);
+        text-decoration: none;
+        background: rgba(255,255,255,0.03);
+        transition: 0.3s;
+    }
+    .social-container a:hover {
+        background: var(--text-main);
+        color: var(--bg-deep);
+        transform: translateY(-4px);
+        box-shadow: 0 0 15px rgba(255,255,255,0.4);
+    }
+
+    .input-group { width: 100%; margin: 10px 0; position: relative; z-index: 2; }
+    input {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--glass-border);
+        padding: 16px;
+        width: 100%;
+        border-radius: 12px;
+        color: var(--text-main);
+        outline: none;
+        font-size: 15px;
+        font-family: 'Space Grotesk', sans-serif;
+        transition: 0.3s;
+    }
+    input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 20px rgba(0, 242, 234, 0.25);
+        transform: scale(1.02);
+    }
+
+    /* --- BUTTONS (RED ANIMATION ADDED) --- */
+    button {
+        border-radius: 50px;
+        border: none;
+        background: linear-gradient(135deg, var(--primary), #00c6fb);
+        color: #000;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 16px 50px;
+        margin-top: 20px;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        position: relative;
+        z-index: 2;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* HOVER EFFECT - RED LIKE BEFORE */
+    button:hover {
+        transform: translateY(-3px);
+        background: linear-gradient(135deg, var(--red-gradient-start), var(--red-gradient-end)); /* Red Gradient */
+        color: white;
+        box-shadow: 0 10px 30px rgba(255, 65, 108, 0.4); /* Red Glow */
+    }
+
+    /* --- OVERLAY (Desktop Only) --- */
+    .overlay-container {
+        position: absolute;
+        top: 0; left: 50%;
+        width: 50%; height: 100%;
+        overflow: hidden;
+        transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        z-index: 100;
+        border-radius: 30px;
+    }
+    .container.right-panel-active .overlay-container { transform: translateX(-100%); }
+    
+    .overlay {
+        background: linear-gradient(135deg, var(--secondary), #ff4b1f);
+        color: #ffffff;
+        position: relative;
+        left: -100%;
+        height: 100%;
+        width: 200%;
+        transform: translateX(0);
+        transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+    .container.right-panel-active .overlay {
+        transform: translateX(50%);
+        background: linear-gradient(135deg, var(--primary), #00c6fb);
+    }
+
+    .overlay-panel {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 0 40px;
+        text-align: center;
+        top: 0; height: 100%; width: 50%;
+        transform: translateX(0);
+        transition: transform 0.6s;
+    }
+    .overlay-left { transform: translateX(-20%); }
+    .container.right-panel-active .overlay-left { transform: translateX(0); }
+    .overlay-right { right: 0; transform: translateX(0); }
+    .container.right-panel-active .overlay-right { transform: translateX(20%); }
+
+    /* Overlay Headings - BOLD & BIG */
+    .overlay-panel h1 {
+        font-size: 45px;
+        font-weight: 800;
+        margin-bottom: 0;
+        line-height: 1.1;
+    }
+    .overlay-panel p {
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        margin: 20px 0 30px;
+    }
+
+    /* GHOST BUTTON (Overlay) */
+    button.ghost {
+        background: transparent;
+        border: 2px solid #ffffff;
+        color: white;
+        box-shadow: none;
+    }
+    /* Ghost Button Hover - Turns Red */
+    button.ghost:hover {
+        background: #ffffff;
+        color: var(--secondary); /* Text becomes Pink/Red */
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(255,255,255,0.4);
+    }
+
+    /* --- MOBILE ONLY ELEMENTS --- */
+    .mobile-toggle {
+        display: none;
+        margin-top: 25px;
+        font-size: 14px;
+        color: var(--text-muted);
+        position: relative; z-index: 5;
+    }
+    .mobile-toggle a {
+        color: var(--primary);
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .mobile-toggle a:hover { color: white; text-shadow: 0 0 10px var(--primary); }
+
+    /* --- RESPONSIVE FIX --- */
+    @media (max-width: 768px) {
+        .container {
+            width: 100%;
+            min-height: 550px;
+            max-width: 100%;
+            border-radius: 0;
+            box-shadow: none;
+            background: transparent;
+        }
+        .container::before { display: none; }
+        .overlay-container { display: none; }
+        .form-container {
+            width: 100%;
+            padding: 30px;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+        .sign-in-container { transform: translate(-50%, -50%); opacity: 1; z-index: 5; }
+        .sign-up-container { transform: translate(-50%, -50%); opacity: 0; z-index: 1; pointer-events: none; }
+        .container.right-panel-active .sign-in-container { transform: translate(-50%, -50%); opacity: 0; z-index: 1; pointer-events: none; }
+        .container.right-panel-active .sign-up-container { transform: translate(-50%, -50%); opacity: 1; z-index: 5; pointer-events: auto; }
+        .mobile-toggle { display: block; }
+    }
+
+</style>
+</head>
+<body>
+
+<div class="shape cube"></div>
+<div class="shape pyramid"></div>
+
+<div class="container" id="container">
+    
+    <div class="form-container sign-up-container">
+        <form action="#">
+            <h1>Create Account</h1>
+            <div class="social-container">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-google"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <span>or use your email for registration</span>
+            <div class="input-group"><input type="text" placeholder="Name" /></div>
+            <div class="input-group"><input type="email" placeholder="Email" /></div>
+            <div class="input-group"><input type="password" placeholder="Password" /></div>
+            <button>Sign Up</button>
+            <p class="mobile-toggle">Already have an account? <a id="mobile-signin-btn">Sign In</a></p>
+        </form>
+    </div>
+
+    <div class="form-container sign-in-container">
+        <form action="#">
+            <h1>Sign in</h1>
+            <div class="social-container">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-google"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <span>or use your account</span>
+            <div class="input-group"><input type="email" placeholder="Email" /></div>
+            <div class="input-group"><input type="password" placeholder="Password" /></div>
+            <a href="#" style="color: var(--text-muted); font-size: 13px; margin: 15px 0;">Forgot your password?</a>
+            <button>Sign In</button>
+            <p class="mobile-toggle">Don't have an account? <a id="mobile-signup-btn">Sign Up</a></p>
+        </form>
+    </div>
+
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>Welcome Back!</h1>
+                <p>To keep connected with us please login with your personal info</p>
+                <button class="ghost" id="signIn">Sign In</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>Hello, Friend!</h1>
+                <p>Enter your personal details and start journey with us</p>
+                <button class="ghost" id="signUp">Sign Up</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const container = document.getElementById('container');
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const mobileSignUp = document.getElementById('mobile-signup-btn');
+    const mobileSignIn = document.getElementById('mobile-signin-btn');
+
+    function activateSignUp() { container.classList.add("right-panel-active"); }
+    function activateSignIn() { container.classList.remove("right-panel-active"); }
+
+    signUpButton.addEventListener('click', activateSignUp);
+    signInButton.addEventListener('click', activateSignIn);
+    mobileSignUp.addEventListener('click', activateSignUp);
+    mobileSignIn.addEventListener('click', activateSignIn);
+
+    // --- DESKTOP ANIMATIONS (Spotlight + Parallax) ---
+    if (window.matchMedia("(min-width: 768px)").matches) {
+        
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+
+            // 1. Spotlight Effect
+            const rect = container.getBoundingClientRect();
+            const xPos = x - rect.left;
+            const yPos = y - rect.top;
+            
+            container.style.setProperty('--x', `${xPos}px`);
+            container.style.setProperty('--y', `${yPos}px`);
+
+            // 2. Background Parallax
+            const moveX = (window.innerWidth - x) / 50;
+            const moveY = (window.innerHeight - y) / 50;
+            
+            document.querySelector('.cube').style.transform = `translate(${moveX}px, ${moveY}px) rotate(45deg)`;
+            document.querySelector('.pyramid').style.transform = `translate(${moveX * -1.5}px, ${moveY * -1.5}px)`;
+        });
+
+        // 3. Magnetic Buttons
+        const btns = document.querySelectorAll('button');
+        btns.forEach(btn => {
+            btn.addEventListener('mousemove', function(e) {
+                const pos = btn.getBoundingClientRect();
+                const btnX = e.clientX - pos.left - pos.width / 2;
+                const btnY = e.clientY - pos.top - pos.height / 2;
+                
+                btn.style.transform = `translate(${btnX * 0.3}px, ${btnY * 0.3}px)`;
+            });
+
+            btn.addEventListener('mouseleave', function() {
+                btn.style.transform = 'translate(0px, 0px)';
+            });
+        });
+    }
+</script>
+
+</body>
+</html>
